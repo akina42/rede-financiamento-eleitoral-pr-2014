@@ -206,19 +206,49 @@ nx.set_node_attributes(DG, cpf_candidato, 'cpf_candidato')
 nx.set_node_attributes(DG, cpf_cnpj_doador, 'cpf_cnpj_doador')
 nx.set_node_attributes(DG, nome_doador_receita, 'nome_doador_receita')
 
-
-
-'''
-for n in DG.nodes():
-    print(nx.get_node_attributes(DG,'cnpj_prestador'))
-
-'''
-
+print("-----------------------------------------------------")
+print("Informações sobre o grafo gerado:")
 print(nx.info(DG))
+
+print("-----------------------------------------------------")
+print("Exportação do arquivo GraphML com a rede:")
 
 #nx.write_graphml(DG, '/home/akina/Dropbox/TCC/Dados/rede_financiamento.graphml')
 
 
+################################################
+
+print("-----------------------------------------------------")
+print("Exportação dos resultados dos cálculos de centralidade:")
 
 
+################################################
+print("1 - Cálculo da centralidade de autovetor")
+#eigenvector_centrality_numpy(G, weight=None, max_iter=50, tol=0)
 
+eigenvector_centrality = nx.eigenvector_centrality_numpy(DG, "weight", len(DG), 0)
+print(['{} {:0.20f}'.format(node, eigenvector_centrality[node]) for node in eigenvector_centrality], file=open('/home/akina/Dropbox/TCC/Dados/eigenvector_centrality.txt', "w"))
+
+
+################################################
+print("2 - Cálculo da centralidade de grau")
+#degree_centrality(G)
+
+degree_centrality = nx.degree_centrality(DG)
+print(['{} {:0.20f}'.format(node, degree_centrality[node]) for node in degree_centrality], file=open('/home/akina/Dropbox/TCC/Dados/degree_centrality.txt', "w"))
+
+
+################################################
+print("3 - Cálculo da centralidade de intermediação")
+#betweenness_centrality(G, k=None, normalized=True, weight=None, endpoints=False, seed=None)
+
+betweenness_centrality = nx.betweenness_centrality(DG, len(DG), True, "weight", False, None)
+print(['{} {:0.20f}'.format(node, betweenness_centrality[node]) for node in betweenness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/betweenness_centrality.txt', "w"))
+
+
+################################################
+print("4 - Cálculo da centralidade de proximidade")
+#closeness_centrality(G, u=None, distance=None, wf_improved=True, reverse=False)
+
+closeness_centrality = nx.closeness_centrality(DG, None, None, True, True)
+print(['{} {:0.20f}'.format(node, closeness_centrality[node]) for node in closeness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/closeness_centrality.txt', "w"))
