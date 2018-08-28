@@ -16,8 +16,6 @@ cpf_candidato = {}
 cpf_cnpj_doador = {}
 nome_doador_receita = {}
 
-#TODO mapear nome do rotulo
-
 ###############################################
 
 nos_partidos = []
@@ -29,20 +27,25 @@ with open("/home/akina/Dropbox/TCC/Dados/receitas_partidos.csv", "r") as csv_par
 
 
 for registro_partidos in registros_partidos:
-    if (registro_partidos[3] not in nos_partidos and registro_partidos[3] != "#NULO"):
+    if registro_partidos[3] is not None and (
+                registro_partidos[3] not in nos_partidos and registro_partidos[3] != "#NULO"):
         nos_partidos.append(registro_partidos[3])
         cnpj_prestador[nos_partidos[-1]] = registro_partidos[3]
         tipo_sequencial[nos_partidos[-1]] = "PARTIDO"
         sequencial[nos_partidos[-1]] = registro_partidos[4]
         uf[nos_partidos[-1]] = registro_partidos[5]
         sigla_partido[nos_partidos[-1]] = registro_partidos[7]
-        nome_rotulo_vertice[-1] = sigla_partido[nos_partidos[-1]] + " " + sequencial[nos_partidos[-1]]
+        nome_rotulo_vertice[nos_partidos[-1]] = (sigla_partido[nos_partidos[-1]] + " | " +
+                                                 tipo_sequencial[nos_partidos[-1]] + " | " +
+                                                 cnpj_prestador[nos_partidos[-1]])
 
-
-    if (registro_partidos[10] not in nos_partidos and registro_partidos[10] != "#NULO"):
+    if registro_partidos[10] is not None and (
+            registro_partidos[10] not in nos_partidos and registro_partidos[10] != "#NULO"):
         nos_partidos.append(registro_partidos[10])
         cpf_cnpj_doador[nos_partidos[-1]] = registro_partidos[10]
         nome_doador_receita[nos_partidos[-1]] = registro_partidos[12]
+        nome_rotulo_vertice[nos_partidos[-1]] = (nome_doador_receita[nos_partidos[-1]] + " | " +
+                                                 cpf_cnpj_doador[nos_partidos[-1]])
 
     aresta_partido = []
     auxiliar_match = None
@@ -83,20 +86,25 @@ with open("/home/akina/Dropbox/TCC/Dados/receitas_comites.csv", "r") as csv_comi
 
 
 for registro_comites in registros_comites:
-    if (registro_comites[3] not in nos_comites and registro_comites[3] != "#NULO"):
+    if registro_comites[3] is not None and (
+            registro_comites[3] not in nos_comites and registro_comites[3] != "#NULO"):
         nos_comites.append(registro_comites[3])
         cnpj_prestador[nos_comites[-1]] = registro_comites[3]
         tipo_sequencial[nos_comites[-1]] = "COMITE"
         sequencial[nos_comites[-1]] = registro_comites[4]
         uf[nos_comites[-1]] = registro_comites[5]
         sigla_partido[nos_comites[-1]] = registro_comites[7]
-        nome_rotulo_vertice[-1] = sigla_partido[nos_comites[-1]] + " " + sequencial[nos_comites[-1]]
+        nome_rotulo_vertice[nos_comites[-1]] = (sigla_partido[nos_comites[-1]] + " | " +
+                                                tipo_sequencial[nos_comites[-1]] + " | " +
+                                                cnpj_prestador[nos_comites[-1]])
 
-
-    if (registro_comites[10] not in nos_comites and registro_comites[10] != "#NULO"):
+    if registro_comites[10] is not None and (
+            registro_comites[10] not in nos_comites and registro_comites[10] != "#NULO"):
         nos_comites.append(registro_comites[10])
         cpf_cnpj_doador[nos_comites[-1]] = registro_comites[10]
         nome_doador_receita[nos_comites[-1]] = registro_comites[12]
+        nome_rotulo_vertice[nos_comites[-1]] = (nome_doador_receita[nos_comites[-1]] + " | " +
+                                                cpf_cnpj_doador[nos_comites[-1]])
 
     aresta_comite = []
     auxiliar_match = None
@@ -138,7 +146,8 @@ with open("/home/akina/Dropbox/TCC/Dados/receitas_candidatos.csv", "r") as csv_c
 
 
 for registro_candidatos in registros_candidatos:
-    if (registro_candidatos[3] not in nos_candidatos and registro_candidatos[3] != "#NULO"):
+    if registro_candidatos[3] is not None and (
+            registro_candidatos[3] not in nos_candidatos and registro_candidatos[3] != "#NULO"):
         nos_candidatos.append(registro_candidatos[3])
         cnpj_prestador[nos_candidatos[-1]] = registro_candidatos[3]
         tipo_sequencial[nos_candidatos[-1]] = "CANDIDATO"
@@ -150,12 +159,18 @@ for registro_candidatos in registros_candidatos:
         cargo_candidato[nos_candidatos[-1]] = registro_candidatos[8]
         nome_candidato[nos_candidatos[-1]] = registro_candidatos[9]
         cpf_candidato[nos_candidatos[-1]] = registro_candidatos[10]
-        nome_rotulo_vertice[-1] = sigla_partido[nos_candidatos[-1]]  + " " + nome_candidato[nos_candidatos[-1]]
+        nome_rotulo_vertice[nos_candidatos[-1]] = (sigla_partido[nos_candidatos[-1]] + " | " +
+                                                   tipo_sequencial[nos_candidatos[-1]] + " | " +
+                                                   nome_candidato[nos_candidatos[-1]] + " | " +
+                                                   cnpj_prestador[nos_candidatos[-1]])
 
-    if (registro_candidatos[13] not in nos_candidatos and registro_candidatos[13] != "#NULO"):
+    if registro_candidatos[13] is not None and (
+            registro_candidatos[13] not in nos_candidatos and registro_candidatos[13] != "#NULO"):
         nos_candidatos.append(registro_candidatos[13])
         cpf_cnpj_doador[nos_candidatos[-1]] = registro_candidatos[13]
         nome_doador_receita[nos_candidatos[-1]] = registro_candidatos[15]
+        nome_rotulo_vertice[nos_candidatos[-1]] = (nome_doador_receita[nos_candidatos[-1]] + " | " +
+                                                   cpf_cnpj_doador[nos_candidatos[-1]])
 
     aresta_candidato = []
     auxiliar_match = None
@@ -202,6 +217,7 @@ DG.add_weighted_edges_from(arestas_candidatos)
 
 ################################################
 
+nx.set_node_attributes(DG, nome_rotulo_vertice, 'nome_rotulo_vertice')
 nx.set_node_attributes(DG, cnpj_prestador, 'cnpj_prestador')
 nx.set_node_attributes(DG, tipo_sequencial,'tipo_sequencial')
 nx.set_node_attributes(DG, sequencial, 'sequencial')
@@ -221,7 +237,7 @@ print(nx.info(DG))
 print("-----------------------------------------------------")
 print("Exportação do arquivo GraphML com a rede:")
 
-#nx.write_graphml(DG, '/home/akina/Dropbox/TCC/Dados/rede_financiamento.graphml')
+nx.write_graphml(DG, '/home/akina/Dropbox/TCC/Dados/teste_rede_financiamento.graphml')
 
 
 ################################################
@@ -237,13 +253,12 @@ print("1 - Cálculo da centralidade de autovetor")
 eigenvector_centrality = nx.eigenvector_centrality_numpy(DG, "weight", len(DG), 0)
 #print(['{}, {:0.20f}'.format(node, eigenvector_centrality[node]) for node in eigenvector_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_eigenvector_centrality.csv', "w"))
 
-dict_nome_rotulo_vertice = nx.get_node_attributes(DG, 'nome_rotulo_vertice')
 
 csv_file_eigenvector = '/home/akina/Dropbox/TCC/Dados/teste_eigenvector_centrality.csv'
 with open(csv_file_eigenvector, "w") as output_eigenvector:
     writer = csv.writer(output_eigenvector)
     for node in sorted(eigenvector_centrality, key=lambda x: eigenvector_centrality[x], reverse=True):
-        writer.writerow(["{}".format(DG.node[node]), "{:0.20f}".format(eigenvector_centrality[node])])
+        writer.writerow([node, "{:0.20f}".format(eigenvector_centrality[node])])
 
 
 ################################################
@@ -251,15 +266,26 @@ print("2 - Cálculo da centralidade de grau")
 #degree_centrality(G)
 
 degree_centrality = nx.degree_centrality(DG)
-print(['{}, {:0.20f} \n'.format(node, degree_centrality[node]) for node in degree_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_degree_centrality.csv', "w"))
+#print(['{}, {:0.20f} \n'.format(node, degree_centrality[node]) for node in degree_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_degree_centrality.csv', "w"))
 
+csv_file_degree = '/home/akina/Dropbox/TCC/Dados/teste_degree_centrality.csv'
+with open(csv_file_degree, "w") as output_degree:
+    writer = csv.writer(output_degree)
+    for node in sorted(degree_centrality, key=lambda x: degree_centrality[x], reverse=True):
+        writer.writerow([node, "{:0.20f}".format(degree_centrality[node])])
 
 ################################################
 print("3 - Cálculo da centralidade de intermediação")
 #betweenness_centrality(G, k=None, normalized=True, weight=None, endpoints=False, seed=None)
 
 betweenness_centrality = nx.betweenness_centrality(DG, len(DG), True, "weight", False, None)
-print(['{}, {:0.20f} \n'.format(node, betweenness_centrality[node]) for node in betweenness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_betweenness_centrality.csv', "w"))
+#print(['{}, {:0.20f} \n'.format(node, betweenness_centrality[node]) for node in betweenness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_betweenness_centrality.csv', "w"))
+
+csv_file_betweenness = '/home/akina/Dropbox/TCC/Dados/teste_betweenness_centrality.csv'
+with open(csv_file_betweenness, "w") as output_betweenness:
+    writer = csv.writer(output_betweenness)
+    for node in sorted(betweenness_centrality, key=lambda x: betweenness_centrality[x], reverse=True):
+        writer.writerow([node, "{:0.20f}".format(betweenness_centrality[node])])
 
 
 ################################################
@@ -267,6 +293,11 @@ print("4 - Cálculo da centralidade de proximidade")
 #closeness_centrality(G, u=None, distance=None, wf_improved=True, reverse=False)
 
 closeness_centrality = nx.closeness_centrality(DG, None, None, True, True)
-print(['{}, {:0.20f} \n'.format(node, closeness_centrality[node]) for node in closeness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_closeness_centrality.csve', "w"))
+#print(['{}, {:0.20f} \n'.format(node, closeness_centrality[node]) for node in closeness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_closeness_centrality.csv', "w"))
 
+csv_file_closeness = '/home/akina/Dropbox/TCC/Dados/teste_closeness_centrality.csv'
+with open(csv_file_closeness, "w") as output_closeness:
+    writer = csv.writer(output_closeness)
+    for node in sorted(closeness_centrality, key=lambda x: closeness_centrality[x], reverse=True):
+        writer.writerow([node, "{:0.20f}".format(closeness_centrality[node])])
 
