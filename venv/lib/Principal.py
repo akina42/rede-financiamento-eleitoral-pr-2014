@@ -240,6 +240,16 @@ print("Exportação do arquivo GraphML com a rede:")
 nx.write_graphml(DG, '/home/akina/Dropbox/TCC/Dados/teste_rede_financiamento.graphml')
 
 
+
+################################################
+
+print("-----------------------------------------------------")
+print("Identificação de campo nulo sobre rendimentos financeiros:")
+
+print(DG.node['#NULO'])
+DG.node['#NULO']['nome_rotulo_vertice'] = "RENDIMENTOS FINANCEIROS"
+print(DG.node['#NULO']['nome_rotulo_vertice'])
+
 ################################################
 
 print("-----------------------------------------------------")
@@ -258,7 +268,9 @@ csv_file_eigenvector = '/home/akina/Dropbox/TCC/Dados/teste_eigenvector_centrali
 with open(csv_file_eigenvector, "w") as output_eigenvector:
     writer = csv.writer(output_eigenvector)
     for node in sorted(eigenvector_centrality, key=lambda x: eigenvector_centrality[x], reverse=True):
-        writer.writerow([node, "{:0.20f}".format(eigenvector_centrality[node])])
+        writer.writerow(
+            ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(eigenvector_centrality[node])])
+
 
 
 ################################################
@@ -272,7 +284,8 @@ csv_file_degree = '/home/akina/Dropbox/TCC/Dados/teste_degree_centrality.csv'
 with open(csv_file_degree, "w") as output_degree:
     writer = csv.writer(output_degree)
     for node in sorted(degree_centrality, key=lambda x: degree_centrality[x], reverse=True):
-        writer.writerow([node, "{:0.20f}".format(degree_centrality[node])])
+        writer.writerow(
+            ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(degree_centrality[node])])
 
 ################################################
 print("3 - Cálculo da centralidade de intermediação")
@@ -285,7 +298,8 @@ csv_file_betweenness = '/home/akina/Dropbox/TCC/Dados/teste_betweenness_centrali
 with open(csv_file_betweenness, "w") as output_betweenness:
     writer = csv.writer(output_betweenness)
     for node in sorted(betweenness_centrality, key=lambda x: betweenness_centrality[x], reverse=True):
-        writer.writerow([node, "{:0.20f}".format(betweenness_centrality[node])])
+        writer.writerow(
+            ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(betweenness_centrality[node])])
 
 
 ################################################
@@ -299,5 +313,6 @@ csv_file_closeness = '/home/akina/Dropbox/TCC/Dados/teste_closeness_centrality.c
 with open(csv_file_closeness, "w") as output_closeness:
     writer = csv.writer(output_closeness)
     for node in sorted(closeness_centrality, key=lambda x: closeness_centrality[x], reverse=True):
-        writer.writerow([node, "{:0.20f}".format(closeness_centrality[node])])
+        writer.writerow(
+            ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(closeness_centrality[node])])
 
