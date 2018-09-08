@@ -4,6 +4,7 @@ import networkx as nx
 #Criar um dicionário para cada atributo
 
 nome_rotulo_vertice = {}
+numero_votos_candidato = {}
 cnpj_prestador = {}
 tipo_sequencial = {}
 sequencial = {}
@@ -218,6 +219,7 @@ DG.add_weighted_edges_from(arestas_candidatos)
 ################################################
 
 nx.set_node_attributes(DG, nome_rotulo_vertice, 'nome_rotulo_vertice')
+nx.set_node_attributes(DG, numero_votos_candidato, 'numero_votos_candidato')
 nx.set_node_attributes(DG, cnpj_prestador, 'cnpj_prestador')
 nx.set_node_attributes(DG, tipo_sequencial,'tipo_sequencial')
 nx.set_node_attributes(DG, sequencial, 'sequencial')
@@ -237,7 +239,7 @@ print(nx.info(DG))
 print("-----------------------------------------------------")
 print("Exportação do arquivo GraphML com a rede:")
 
-nx.write_graphml(DG, '/home/akina/Dropbox/TCC/Dados/teste_rede_financiamento.graphml')
+nx.write_graphml(DG, '/home/akina/Dropbox/TCC/Dados/Resultados/rede_financiamento.graphml')
 
 
 
@@ -251,6 +253,30 @@ DG.node['#NULO']['nome_rotulo_vertice'] = "RENDIMENTOS FINANCEIROS"
 print(DG.node['#NULO']['nome_rotulo_vertice'])
 
 ################################################
+print("-----------------------------------------------------")
+print("Leitura e inserção dos números de votos para os candidatos:")
+
+
+with open("/home/akina/Dropbox/TCC/Dados/Resultado_da_Eleicao_teste_outro.csv", "r") as csv_resultado:
+    leitor_resultado = csv.reader(csv_resultado)
+    registros_resultado = [n for n in leitor_resultado][1:]
+
+#Para não incluir votos brancos ou nulos
+for registro_resultado in registros_resultado:
+    if registro_resultado[3] is not None and registro_resultado[7] is not None:
+        for node in DG.nodes():
+            if ("tipo_sequencial" in DG.node[node]):
+                if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                    if (DG.node[node]['nome_candidato'] == registro_resultado[3]):
+                        DG.node[node]['numero_votos_candidato'] = registro_resultado[7]
+                    elif (registro_resultado[7] == "0"):
+                        nome_concatenado = "# " + DG.node[node]['nome_candidato']
+                        if(nome_concatenado == registro_resultado[3]):
+                            DG.node[node]['numero_votos_candidato'] = registro_resultado[7]
+
+
+
+###############################################
 
 print("-----------------------------------------------------")
 print("Exportação dos resultados dos cálculos de centralidade:")
@@ -264,12 +290,37 @@ eigenvector_centrality = nx.eigenvector_centrality_numpy(DG, "weight", len(DG), 
 #print(['{}, {:0.20f}'.format(node, eigenvector_centrality[node]) for node in eigenvector_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_eigenvector_centrality.csv', "w"))
 
 
-csv_file_eigenvector = '/home/akina/Dropbox/TCC/Dados/teste_eigenvector_centrality.csv'
+csv_file_eigenvector = '/home/akina/Dropbox/TCC/Dados/Resultados/eigenvector_centrality.csv'
 with open(csv_file_eigenvector, "w") as output_eigenvector:
     writer = csv.writer(output_eigenvector)
     for node in sorted(eigenvector_centrality, key=lambda x: eigenvector_centrality[x], reverse=True):
         writer.writerow(
             ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(eigenvector_centrality[node])])
+
+
+
+
+csv_file_eigenvector_votos = '/home/akina/Dropbox/TCC/Dados/Resultados/votos_eigenvector_centrality.csv'
+with open(csv_file_eigenvector_votos, "w") as output_eigenvector_votos:
+    writer = csv.writer(output_eigenvector_votos)
+    for node in sorted(eigenvector_centrality, key=lambda x: eigenvector_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" in DG.node[node]):
+                    writer.writerow(
+                        ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{}".format(DG.node[node]["numero_votos_candidato"]), "{:0.20f}".format(eigenvector_centrality[node])])
+
+
+
+csv_file_eigenvector_votos = '/home/akina/Dropbox/TCC/Dados/Resultados/out_votos_eigenvector_centrality.csv'
+with open(csv_file_eigenvector_votos, "w") as output_eigenvector_votos:
+    writer = csv.writer(output_eigenvector_votos)
+    for node in sorted(eigenvector_centrality, key=lambda x: eigenvector_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" not in DG.node[node]):
+                    writer.writerow(
+                        ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(eigenvector_centrality[node])])
 
 
 
@@ -280,12 +331,13 @@ print("2 - Cálculo da centralidade de grau")
 degree_centrality = nx.degree_centrality(DG)
 #print(['{}, {:0.20f} \n'.format(node, degree_centrality[node]) for node in degree_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_degree_centrality.csv', "w"))
 
-csv_file_degree = '/home/akina/Dropbox/TCC/Dados/teste_degree_centrality.csv'
+csv_file_degree = '/home/akina/Dropbox/TCC/Dados/Resultados/degree_centrality.csv'
 with open(csv_file_degree, "w") as output_degree:
     writer = csv.writer(output_degree)
     for node in sorted(degree_centrality, key=lambda x: degree_centrality[x], reverse=True):
         writer.writerow(
             ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(degree_centrality[node])])
+
 
 ################################################
 print("3 - Cálculo da centralidade de intermediação")
@@ -294,7 +346,7 @@ print("3 - Cálculo da centralidade de intermediação")
 betweenness_centrality = nx.betweenness_centrality(DG, len(DG), True, "weight", False, None)
 #print(['{}, {:0.20f} \n'.format(node, betweenness_centrality[node]) for node in betweenness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_betweenness_centrality.csv', "w"))
 
-csv_file_betweenness = '/home/akina/Dropbox/TCC/Dados/teste_betweenness_centrality.csv'
+csv_file_betweenness = '/home/akina/Dropbox/TCC/Dados/Resultados/betweenness_centrality.csv'
 with open(csv_file_betweenness, "w") as output_betweenness:
     writer = csv.writer(output_betweenness)
     for node in sorted(betweenness_centrality, key=lambda x: betweenness_centrality[x], reverse=True):
@@ -309,7 +361,7 @@ print("4 - Cálculo da centralidade de proximidade")
 closeness_centrality = nx.closeness_centrality(DG, None, None, True, True)
 #print(['{}, {:0.20f} \n'.format(node, closeness_centrality[node]) for node in closeness_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_closeness_centrality.csv', "w"))
 
-csv_file_closeness = '/home/akina/Dropbox/TCC/Dados/teste_closeness_centrality.csv'
+csv_file_closeness = '/home/akina/Dropbox/TCC/Dados/Resultados/closeness_centrality.csv'
 with open(csv_file_closeness, "w") as output_closeness:
     writer = csv.writer(output_closeness)
     for node in sorted(closeness_centrality, key=lambda x: closeness_centrality[x], reverse=True):
