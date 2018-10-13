@@ -721,3 +721,104 @@ with open(csv_file_closeness_votos, "w") as output_closeness_votos:
                             ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
                              "{}".format(DG.node[node]["numero_votos_candidato"]),
                              "{:0.20f}".format(closeness_centrality[node])])
+
+
+
+################################################
+print("5 - Cálculo da centralidade de grau interna")
+#in_degree_centrality(G)
+
+in_degree_centrality = nx.in_degree_centrality(DG)
+#print(['{}, {:0.20f} \n'.format(node, in_degree_centrality[node]) for node in in_degree_centrality], file=open('/home/akina/Dropbox/TCC/Dados/teste_in_degree_centrality.csv', "w"))
+
+
+csv_file_in_degree = '/home/akina/Dropbox/TCC/Resultados/Centralidades_Geral_Todos/in_degree_centrality.csv'
+with open(csv_file_in_degree, "w") as output_in_degree:
+    writer = csv.writer(output_in_degree)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        writer.writerow(
+            ["{}".format(DG.node[node]["nome_rotulo_vertice"]), "{:0.20f}".format(in_degree_centrality[node])])
+
+
+csv_file_in_degree_votos = '/home/akina/Dropbox/TCC/Resultados/Centralidades_Candidatos_Votos/votos_in_degree_centrality.csv'
+with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
+    writer = csv.writer(output_in_degree_votos)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" in DG.node[node]):
+                    writer.writerow(
+                        ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
+                         "{}".format(DG.node[node]["numero_votos_candidato"]),
+                         "{:0.20f}".format(in_degree_centrality[node])])
+
+
+csv_file_in_degree_votos = '/home/akina/Dropbox/TCC/Resultados/Centralidades_Candidatos_Inaptos/out_votos_in_degree_centrality.csv'
+with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
+    writer = csv.writer(output_in_degree_votos)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" not in DG.node[node]):
+                    writer.writerow(
+                        ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
+                         "{:0.20f}".format(in_degree_centrality[node])])
+
+
+
+csv_file_in_degree_votos = '/home/akina/Dropbox/TCC/Resultados/Centralidades_Governador/votos_governador_in_degree_centrality.csv'
+with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
+    writer = csv.writer(output_in_degree_votos)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" in DG.node[node]):
+                    if(DG.node[node]["cargo_candidato"] == "Governador"):
+                        writer.writerow(
+                            ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
+                             "{}".format(DG.node[node]["numero_votos_candidato"]),
+                             "{:0.20f}".format(in_degree_centrality[node])])
+
+
+csv_file_in_degree_votos = '/home/akina/Dropbox/TCC/Resultados/Centralidades_Senador/votos_senador_in_degree_centrality.csv'
+with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
+    writer = csv.writer(output_in_degree_votos)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" in DG.node[node]):
+                    if(DG.node[node]["cargo_candidato"] == "Senador"):
+                        writer.writerow(
+                            ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
+                             "{}".format(DG.node[node]["numero_votos_candidato"]),
+                             "{:0.20f}".format(in_degree_centrality[node])])
+
+
+
+csv_file_in_degree_votos = '/home/akina/Dropbox/TCC/Resultados/Centralidades_DepFederal/votos_depfederal_in_degree_centrality.csv'
+with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
+    writer = csv.writer(output_in_degree_votos)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" in DG.node[node]):
+                    if(DG.node[node]["cargo_candidato"] == "Deputado Federal"):
+                        writer.writerow(
+                            ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
+                             "{}".format(DG.node[node]["numero_votos_candidato"]),
+                             "{:0.20f}".format(in_degree_centrality[node])])
+
+
+
+csv_file_in_degree_votos = '/home/akina/Dropbox/TCC/Resultados/Centralidades_DepEstadual/votos_depestadual_in_degree_centrality.csv'
+with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
+    writer = csv.writer(output_in_degree_votos)
+    for node in sorted(in_degree_centrality, key=lambda x: in_degree_centrality[x], reverse=True):
+        if ("tipo_sequencial" in DG.node[node]):
+            if(DG.node[node]["tipo_sequencial"] == "CANDIDATO"):
+                if("numero_votos_candidato" in DG.node[node]):
+                    if(DG.node[node]["cargo_candidato"] == "Deputado Estadual"):
+                        writer.writerow(
+                            ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
+                             "{}".format(DG.node[node]["numero_votos_candidato"]),
+                             "{:0.20f}".format(in_degree_centrality[node])])
