@@ -307,6 +307,9 @@ print("-----------------------------------------------------")
 print("Informações sobre o grafo gerado:")
 print(nx.info(DG))
 
+print("Movimentação Financeira:")
+print(DG.size(weight='weight'))
+
 print("-----------------------------------------------------")
 print("Exportação do arquivo GraphML com a rede:")
 
@@ -822,3 +825,4 @@ with open(csv_file_in_degree_votos, "w") as output_in_degree_votos:
                             ["{}".format(DG.node[node]["nome_rotulo_vertice"]),
                              "{}".format(DG.node[node]["numero_votos_candidato"]),
                              "{:0.20f}".format(in_degree_centrality[node])])
+
